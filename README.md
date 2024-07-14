@@ -1,33 +1,37 @@
-# O2 Fullstack Challenge
+# Desafio
 
-Bem-vindo ao desafio de Fullstack da O2 Inc.! Estamos felizes por você estar interessado em se juntar à nossa equipe. Este repositório contém todas as instruções e requisitos necessários para a conclusão do desafio. 
+Este desafio foi feito com três módulos onde é possível adicionar, remover e editar produto. Registrar movimentações de entrada e saída de produtos. Relatórios de valor total do estoque, quantidade de itens em estoque, quantidade total de entradas e quantidade total de saídas.
 
-## Sobre a O2 Inc.
+## Módulos
 
-Estamos construindo uma nova área de tecnologia e engenharia na O2 Inc., focada em criar uma cultura de desenvolvimento colaborativo. Nosso objetivo é formar um time de engenharia onde cada membro esteja dedicado a se desenvolver, trazer ideias inovadoras e ter a oportunidade de crescer profissionalmente. Valorizamos a criatividade, a inovação e o aprendizado contínuo.
+- Produtos
+- Movimentações
+- Relatórios
 
-## Sobre o Desafio
+## Para iniciar o projeto
 
-O objetivo deste desafio é desenvolver um sistema de gestão de estoque que permita o cadastro de produtos, registro de movimentações de estoque e geração de relatórios. Queremos avaliar suas habilidades em design de aplicação, qualidade do código, arquitetura e documentação.
+Para rodar o back-end
 
-## Tecnologias Requeridas
+```bash
+  cd backend
+  npm i
+  npm start
+```
 
-- **Front-end:** React
-- **Back-end:** TypeScript, Python, Java ou a linguagem de sua preferência, desde que acompanhada de um README detalhado explicando o funcionamento da aplicação.
-- **Banco de Dados:** Banco de dados relacional (MySQL, PostgreSQL, etc.)
+Para rodar o front-end
 
-## Processo de Submissão
+```bash
+  cd frontend
+  npm i
+  npm run dev
+```
 
-1. Faça um fork deste repositório.
-2. Implemente a solução conforme descrito no arquivo [DESAFIO.md](https://github.com/O2-Tech/o2-fullstack-challange/blob/main/DESAFIO.md).
-3. Garanta que todas as dependências e instruções de configuração estejam claramente documentadas.
-4. Envie o link do seu repositório forkado para avaliação.
+## Sobre o front-end
 
-## Dúvidas?
+O front-end foi construído usando next.js e react.js.
 
-Se você tiver qualquer dúvida durante o processo de implementação, sinta-se à vontade para entrar em contato comigo através do [LinkedIn](https://www.linkedin.com/in/jgabrielfreitas/).
+## Sobre o back-end
 
-## Boa sorte!
+No back-end foi usado o banco MongoDB Atlas, express, cors e mongoose.
 
-Estamos ansiosos para ver seu trabalho e discutir seu potencial para se juntar à nossa equipe. 
-Boa sorte!
+A estrutura de pastas foi organizada da seguinte forma: A pasta controllers é onde fica a parte lógica e as regras de negócio. A pasta db que é responsável pela conexão com o banco de dados. A pasta models determina como será o modelo das nossas collections. A pasta routes que determina as rotas.

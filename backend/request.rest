@@ -1,0 +1,51 @@
+POST http://localhost:3000/api/produtos
+Content-Type: application/json
+
+{
+    "nome": "Produto 3",
+    "descricao": "Descricao do produto 3",
+    "quantidadeDisponivel": "10",
+    "precoUnitario": "2.4",
+    "categoria": "Categoria 3"
+}
+
+###
+
+GET http://localhost:3000/api/produtos
+
+###
+
+GET http://localhost:3000/api/produtos/668d7b9f21eea8351cffd800
+
+### 
+
+DELETE http://localhost:3000/api/produtos/668d934b8c086b1810d8859e
+
+###
+
+PUT http://localhost:3000/api/produtos/668d88980920b69e97ccb946
+Content-Type: application/json
+
+{
+    "nome": "Produto 2 Atualizado",
+    "descricao": "Descricao do produto 2",
+    "quantidadeDisponivel": "10",
+    "precoUnitario": "2.4",
+    "categoria": "Categoria 2"
+}
+
+###
+
+POST http://localhost:3000/api/movimentacaoEstoque
+Content-Type: application/json
+
+{
+    "idProduto": "668f3da06d380032891297cf",
+    "tipoMovimentacao": "ENTRADA",
+    "observacao": "entrada teste",
+    "quantidade": 10
+}
+
+### 
+
+GET http://localhost:3000/api/movimentacaoEstoque
