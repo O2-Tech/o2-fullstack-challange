@@ -21,7 +21,6 @@ export default class ProductsRepository implements IProductsRepository {
   public async findOne(id: number): Promise<Products | null> {
     return await this.ormRepository.findOne({
       where: { id },
-      relations: ['stock_movements', 'sale_items'],
     });
   }
 

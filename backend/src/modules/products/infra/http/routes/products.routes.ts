@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Segments, Joi } from 'celebrate';
-import ProductsController from '../controllers/ProductsController';
+import ProductsController from '@modules/products/infra/http/controllers/ProductsController';
 
 const productsRouter = Router();
 const productsController = new ProductsController();

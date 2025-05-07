@@ -1,7 +1,7 @@
-import { ICreateProduct } from '../domain/models/ICreateProduct';
-import { IProductsRepository } from '../domain/repositories/IProductsRepository';
-import ProductsRepository from '../infra/typeorm/repositories/ProductsRepository';
-import { IProducts } from '../domain/models/IProducts';
+import { ICreateProduct } from '@modules/products/domain/models/ICreateProduct';
+import { IProductsRepository } from '@modules/products/domain/repositories/IProductsRepository';
+import ProductsRepository from '@modules/products/infra/typeorm/repositories/ProductsRepository';
+import { IProducts } from '@modules/products/domain/models/IProducts';
 
 class CreateProductService {
   private productsRepository: IProductsRepository;
