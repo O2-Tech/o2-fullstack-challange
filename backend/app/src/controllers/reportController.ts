@@ -1,16 +1,9 @@
+import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { db } from "../models/db";
 import { products, stockMovements } from "../models/schema";
-import { eq, sql, desc, and, gte, lte } from "drizzle-orm";
-import { z } from "zod";
-
-const dateRangeSchema = z.object({
-  startDate: z.string(),
-  endDate: z.string(),
-});
 
 export const reportController = new Elysia({ prefix: "/reports" })
-  // Valor total em estoque
   .get("/total-stock-value", async () => {
     try {
       const result = await db
@@ -31,7 +24,6 @@ export const reportController = new Elysia({ prefix: "/reports" })
     }
   })
 
-  // Movimentações por período
   .get("/movements-by-period/:startDate/:endDate", async ({ params }) => {
     try {
       const { startDate, endDate } = params;
