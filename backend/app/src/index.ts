@@ -1,8 +1,9 @@
-import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
+import { Elysia } from "elysia";
 import { productController } from "./controllers/productController";
 import { stockMovementController } from "./controllers/stockMovementController";
+import { reportController } from "./controllers/reportController";
 
 const app = new Elysia()
   .use(cors())
@@ -18,6 +19,7 @@ const app = new Elysia()
   )
   .use(productController)
   .use(stockMovementController)
+  .use(reportController)
   .get("/", () => "API de Gestão de Estoque")
   .listen(process.env.PORT || 3000);
 
