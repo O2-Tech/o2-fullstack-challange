@@ -12,7 +12,10 @@ export const productSchema = z.object({
 export const stockMovementSchema = z.object({
   productId: z.number().int().positive("ID do produto é obrigatório"),
   quantity: z.number().int().positive("Quantidade deve ser maior que 0"),
-  type: z.enum(["entrada", "saida"]),
+  type: z.enum(["entrada", "saida"], {
+    required_error: "Tipo é obrigatório",
+    invalid_type_error: "Tipo deve ser 'entrada' ou 'saida'",
+  }),
   description: z.string().optional(),
 });
 
