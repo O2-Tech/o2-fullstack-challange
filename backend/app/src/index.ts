@@ -1,9 +1,8 @@
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
-import { config } from "dotenv";
-
-config();
+import { productController } from "./controllers/productController";
+import { stockMovementController } from "./controllers/stockMovementController";
 
 const app = new Elysia()
   .use(cors())
@@ -17,6 +16,8 @@ const app = new Elysia()
       },
     })
   )
+  .use(productController)
+  .use(stockMovementController)
   .get("/", () => "API de Gestão de Estoque")
   .listen(process.env.PORT || 3000);
 
