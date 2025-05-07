@@ -1,36 +1,21 @@
-import { createFileRoute } from '@tanstack/react-router'
-import logo from '../logo.svg'
-import '../App.css'
+import { createFileRoute } from "@tanstack/react-router";
+import DashboardPage from "./dashboard";
+import ProductsPage from "./products";
+import StockPage from "./stock";
+import ReportsPage from "./reports";
 
-export const Route = createFileRoute('/')({
-  component: App,
-})
+export const Route = createFileRoute("/")({
+  component: DashboardPage,
+});
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/routes/index.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="App-link"
-          href="https://tanstack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn TanStack
-        </a>
-      </header>
-    </div>
-  )
-}
+export const productsRoute = createFileRoute("/")({
+  component: ProductsPage,
+});
+
+export const stockRoute = createFileRoute("/")({
+  component: StockPage,
+});
+
+export const reportsRoute = createFileRoute("/")({
+  component: ReportsPage,
+});
