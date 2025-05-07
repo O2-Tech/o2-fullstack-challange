@@ -1,7 +1,25 @@
 import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
+import { swagger } from "@elysiajs/swagger";
+import { config } from "dotenv";
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+config();
+
+const app = new Elysia()
+  .use(cors())
+  .use(
+    swagger({
+      documentation: {
+        info: {
+          title: "API de Gestão de Estoque",
+          version: "1.0.0",
+        },
+      },
+    })
+  )
+  .get("/", () => "API de Gestão de Estoque")
+  .listen(process.env.PORT || 3000);
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+  `🦊 Servidor rodando em ${app.server?.hostname}:${app.server?.port}`
 );
