@@ -5,7 +5,7 @@
   "tailwind": false,
   "packageManager": "pnpm",
   "toolchain": "none",
-  "mode": "file-router",
+  "mode": "code-router",
   "git": true,
   "variableValues": {},
   "version": 1,
