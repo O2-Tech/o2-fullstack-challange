@@ -1,7 +1,7 @@
+import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { db } from "../models/db";
-import { stockMovements, products } from "../models/schema";
-import { eq } from "drizzle-orm";
+import { products, stockMovements } from "../models/schema";
 import { stockMovementSchema } from "../models/validations";
 
 export const stockMovementController = new Elysia({
