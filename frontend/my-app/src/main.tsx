@@ -1,18 +1,19 @@
-import { StrictMode } from 'react'
-import ReactDOM from 'react-dom/client'
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
 import {
   Outlet,
   RouterProvider,
   createRootRoute,
   createRoute,
   createRouter,
-} from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+} from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import './styles.css'
-import reportWebVitals from './reportWebVitals.ts'
+import "./styles.css";
+import reportWebVitals from "./reportWebVitals.ts";
 
-import App from './App.tsx'
+import App from "./App.tsx";
+import { Produtos } from "./pages/Produtos";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -21,42 +22,50 @@ const rootRoute = createRootRoute({
       <TanStackRouterDevtools />
     </>
   ),
-})
+});
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: "/",
   component: App,
-})
+});
 
-const routeTree = rootRoute.addChildren([indexRoute])
+// Nova rota de produtos
+const produtosRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/produtos",
+  component: Produtos,
+});
+
+// Adicionando a nova rota ao routeTree
+const routeTree = rootRoute.addChildren([indexRoute, produtosRoute]);
 
 const router = createRouter({
   routeTree,
   context: {},
-  defaultPreload: 'intent',
+  defaultPreload: "intent",
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
-})
+});
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof router
+    router: typeof router;
   }
 }
 
-const rootElement = document.getElementById('app')
+const rootElement = document.getElementById("app");
 if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
+  const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
       <RouterProvider router={router} />
-    </StrictMode>,
-  )
+    </StrictMode>
+  );
 }
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()
+reportWebVitals();
