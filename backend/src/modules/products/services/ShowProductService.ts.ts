@@ -3,22 +3,22 @@ import ProductsRepository from '../infra/typeorm/repositories/ProductsRepository
 import { IProducts } from '../domain/models/IProducts';
 import AppError from '@shared/errors/AppError';
 
-class ListAllProductsService {
+class ShowProductService {
   private productsRepository: IProductsRepository;
 
   constructor() {
     this.productsRepository = new ProductsRepository();
   }
 
-  public async execute(): Promise<IProducts[]> {
-    const products = await this.productsRepository.findAll();
+  public async execute(id: number): Promise<IProducts | null> {
+    const product = await this.productsRepository.findOne(id);
 
-    if (products.length === 0) {
-      throw new AppError('There are no products available!', 400);
+    if (!product) {
+      throw new AppError('Product not found!');
     }
 
-    return products;
+    return product;
   }
 }
 
-export default ListAllProductsService;
+export default ShowProductService;

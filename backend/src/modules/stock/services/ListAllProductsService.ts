@@ -1,7 +1,5 @@
 import { IProductsRepository } from '../domain/repositories/IProductsRepository';
 import ProductsRepository from '../infra/typeorm/repositories/ProductsRepository';
-import { IProducts } from '../domain/models/IProducts';
-import AppError from '@shared/errors/AppError';
 
 class ListAllProductsService {
   private productsRepository: IProductsRepository;
@@ -10,14 +8,8 @@ class ListAllProductsService {
     this.productsRepository = new ProductsRepository();
   }
 
-  public async execute(): Promise<IProducts[]> {
-    const products = await this.productsRepository.findAll();
-
-    if (products.length === 0) {
-      throw new AppError('There are no products available!', 400);
-    }
-
-    return products;
+  public async execute(): Promise<null> {
+    return null;
   }
 }
 
