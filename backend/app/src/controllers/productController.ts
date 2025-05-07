@@ -1,4 +1,4 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { db } from "../models/db";
 import { products } from "../models/schema";
 import { eq } from "drizzle-orm";
@@ -12,22 +12,25 @@ interface ProductBody extends ProductInput {}
 
 export const productController = new Elysia({ prefix: "/products" })
   .get("/", async () => {
-    const allProducts = await db.select().from(products);
-    return allProducts;
+    try {
+      const allProducts = await db.select().from(products);
+      return allProducts;
+    } catch (error: any) {
+      throw new Error(`Erro ao buscar produtos: ${error.message}`);
+    }
   })
 
-  .get(
-    "/:id",
-    {
-      params: t.Object({
-        id: t.String(),
-      }),
-    },
-    async ({ params: { id } }: { params: ProductParams }) => {
+  .get("/:id", async ({ params }) => {
+    try {
+      if (!params.id || isNaN(Number(params.id))) {
+        throw new Error("ID inválido");
+      }
+
+      const productId = Number(params.id);
       const product = await db
         .select()
         .from(products)
-        .where(eq(products.id, Number(id)))
+        .where(eq(products.id, productId))
         .limit(1);
 
       if (!product.length) {
@@ -35,8 +38,10 @@ export const productController = new Elysia({ prefix: "/products" })
       }
 
       return product[0];
+    } catch (error: any) {
+      throw new Error(`Erro ao buscar produto: ${error.message}`);
     }
-  )
+  })
 
   .post("/", async ({ body }) => {
     try {
@@ -51,25 +56,18 @@ export const productController = new Elysia({ prefix: "/products" })
     }
   })
 
-  .put(
-    "/:id",
-    {
-      params: t.Object({
-        id: t.String(),
-      }),
-    },
-    async ({
-      params: { id },
-      body,
-    }: {
-      params: ProductParams;
-      body: ProductBody;
-    }) => {
+  .put("/:id", async ({ params, body }) => {
+    try {
+      if (!params.id || isNaN(Number(params.id))) {
+        throw new Error("ID inválido");
+      }
+
+      const productId = Number(params.id);
       const validatedData = productSchema.parse(body) as ProductInput;
       const updatedProduct = await db
         .update(products)
         .set(validatedData)
-        .where(eq(products.id, Number(id)))
+        .where(eq(products.id, productId))
         .returning();
 
       if (!updatedProduct.length) {
@@ -77,26 +75,32 @@ export const productController = new Elysia({ prefix: "/products" })
       }
 
       return updatedProduct[0];
+    } catch (error: any) {
+      throw new Error(`Erro ao atualizar produto: ${error.message}`);
     }
-  )
+  })
 
-  .delete(
-    "/:id",
-    {
-      params: t.Object({
-        id: t.String(),
-      }),
-    },
-    async ({ params: { id } }: { params: ProductParams }) => {
-      const deletedProduct = await db
-        .delete(products)
-        .where(eq(products.id, Number(id)))
-        .returning();
+  .delete("/:id", async ({ params }) => {
+    try {
+      if (!params.id || isNaN(Number(params.id))) {
+        throw new Error("ID inválido");
+      }
 
-      if (!deletedProduct.length) {
+      const productId = Number(params.id);
+      const product = await db
+        .select()
+        .from(products)
+        .where(eq(products.id, productId))
+        .limit(1);
+
+      if (!product.length) {
         throw new Error("Produto não encontrado");
       }
 
+      await db.delete(products).where(eq(products.id, productId));
+
       return { message: "Produto deletado com sucesso" };
+    } catch (error: any) {
+      throw new Error(`Erro ao deletar produto: ${error.message}`);
     }
-  );
+  });

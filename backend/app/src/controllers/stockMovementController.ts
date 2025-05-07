@@ -16,12 +16,17 @@ export const stockMovementController = new Elysia({
     }
   })
 
-  .get("/:id", async ({ params: { id } }) => {
+  .get("/:id", async ({ params }) => {
     try {
+      if (!params.id || isNaN(Number(params.id))) {
+        throw new Error("ID inválido");
+      }
+
+      const movementId = Number(params.id);
       const movement = await db
         .select()
         .from(stockMovements)
-        .where(eq(stockMovements.id, Number(id)))
+        .where(eq(stockMovements.id, movementId))
         .limit(1);
 
       if (!movement.length) {
