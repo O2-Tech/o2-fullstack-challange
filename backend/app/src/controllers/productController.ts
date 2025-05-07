@@ -1,14 +1,8 @@
+import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { db } from "../models/db";
-import { products } from "../models/schema";
-import { eq } from "drizzle-orm";
+import { products, stockMovements } from "../models/schema";
 import { productSchema, type ProductInput } from "../models/validations";
-
-interface ProductParams {
-  id: string;
-}
-
-interface ProductBody extends ProductInput {}
 
 export const productController = new Elysia({ prefix: "/products" })
   .get("/", async () => {
@@ -87,19 +81,32 @@ export const productController = new Elysia({ prefix: "/products" })
       }
 
       const productId = Number(params.id);
-      const product = await db
-        .select()
-        .from(products)
-        .where(eq(products.id, productId))
-        .limit(1);
 
-      if (!product.length) {
-        throw new Error("Produto não encontrado");
-      }
+      return await db.transaction(async (tx) => {
+        // Verifica se o produto existe
+        const product = await tx
+          .select()
+          .from(products)
+          .where(eq(products.id, productId))
+          .limit(1);
 
-      await db.delete(products).where(eq(products.id, productId));
+        if (!product.length) {
+          throw new Error("Produto não encontrado");
+        }
 
-      return { message: "Produto deletado com sucesso" };
+        // Primeiro deleta todas as movimentações
+        await tx
+          .delete(stockMovements)
+          .where(eq(stockMovements.productId, productId));
+
+        // Depois deleta o produto
+        await tx.delete(products).where(eq(products.id, productId));
+
+        return {
+          message: "Produto e suas movimentações deletados com sucesso",
+          deletedProduct: product[0],
+        };
+      });
     } catch (error: any) {
       throw new Error(`Erro ao deletar produto: ${error.message}`);
     }
