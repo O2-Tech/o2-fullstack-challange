@@ -13,6 +13,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d inventory_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     container_name: pgadmin
@@ -24,6 +29,25 @@ services:
       - "5050:80"
     depends_on:
       - postgres
+
+  backend:
+    container_name: inventory_backend
+    build:
+      context: ./backend/app
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://admin:admin123@postgres:5432/inventory_db
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend/app:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   postgres_data:
