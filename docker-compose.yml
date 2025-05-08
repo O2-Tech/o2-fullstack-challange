@@ -34,30 +34,6 @@ services:
     networks:
       - inventory_network
 
-  backend:
-    container_name: inventory_backend
-    build:
-      context: ./backend/app
-      dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/inventory_db
-      NODE_ENV: production
-      PORT: 3000
-      HOST: "0.0.0.0"
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./backend/app:/app
-      - /app/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - inventory_network
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
 networks:
   inventory_network:
     driver: bridge
