@@ -1,10 +1,10 @@
-import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
-import { Elysia } from "elysia";
-import { db } from "../models/db";
-import { products, stockMovements } from "../models/schema";
+import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
+import { Elysia } from 'elysia';
+import { db } from '../models/db';
+import { products, stockMovements } from '../models/schema';
 
-export const reportController = new Elysia({ prefix: "/reports" })
-  .get("/stock-status", async () => {
+export const reportController = new Elysia({ prefix: '/reports' })
+  .get('/stock-status', async () => {
     try {
       const stockStatus = await db
         .select({
@@ -25,7 +25,6 @@ export const reportController = new Elysia({ prefix: "/reports" })
         .from(products)
         .orderBy(products.category, products.name);
 
-      // Agrupa por categoria para facilitar a visualização
       const groupedByCategory = stockStatus.reduce(
         (acc, item) => {
           const category = item.category;
@@ -44,7 +43,7 @@ export const reportController = new Elysia({ prefix: "/reports" })
         {} as Record<
           string,
           { items: any[]; totalQuantity: number; totalValue: number }
-        >
+        >,
       );
 
       return {
@@ -55,11 +54,11 @@ export const reportController = new Elysia({ prefix: "/reports" })
             totalProducts: stockStatus.length,
             totalQuantity: stockStatus.reduce(
               (sum, item) => sum + item.quantity,
-              0
+              0,
             ),
             totalValue: stockStatus.reduce(
               (sum, item) => sum + parseFloat(item.totalValue),
-              0
+              0,
             ),
           },
         },
@@ -67,11 +66,11 @@ export const reportController = new Elysia({ prefix: "/reports" })
     } catch (error) {
       return {
         success: false,
-        error: "Erro ao gerar relatório de status do estoque",
+        error: 'Erro ao gerar relatório de status do estoque',
       };
     }
   })
-  .get("/movements", async ({ query }) => {
+  .get('/movements', async ({ query }) => {
     try {
       const { startDate, endDate, type, category } = query;
 
@@ -108,7 +107,6 @@ export const reportController = new Elysia({ prefix: "/reports" })
         .where(conditions)
         .orderBy(desc(stockMovements.createdAt));
 
-      // Agrupa por tipo de movimento para facilitar a análise
       const groupedByType = movements.reduce(
         (acc, item) => {
           const type = item.type;
@@ -127,7 +125,7 @@ export const reportController = new Elysia({ prefix: "/reports" })
         {} as Record<
           string,
           { movements: any[]; totalQuantity: number; totalValue: number }
-        >
+        >,
       );
 
       return {
@@ -139,18 +137,18 @@ export const reportController = new Elysia({ prefix: "/reports" })
             byType: {
               IN: {
                 quantity: movements
-                  .filter((m) => m.type === "IN")
+                  .filter((m) => m.type === 'IN')
                   .reduce((sum, m) => sum + m.quantity, 0),
                 value: movements
-                  .filter((m) => m.type === "IN")
+                  .filter((m) => m.type === 'IN')
                   .reduce((sum, m) => sum + parseFloat(m.totalValue), 0),
               },
               OUT: {
                 quantity: movements
-                  .filter((m) => m.type === "OUT")
+                  .filter((m) => m.type === 'OUT')
                   .reduce((sum, m) => sum + m.quantity, 0),
                 value: movements
-                  .filter((m) => m.type === "OUT")
+                  .filter((m) => m.type === 'OUT')
                   .reduce((sum, m) => sum + parseFloat(m.totalValue), 0),
               },
             },
@@ -160,7 +158,7 @@ export const reportController = new Elysia({ prefix: "/reports" })
     } catch (error) {
       return {
         success: false,
-        error: "Erro ao gerar relatório de movimentações",
+        error: 'Erro ao gerar relatório de movimentações',
       };
     }
   });

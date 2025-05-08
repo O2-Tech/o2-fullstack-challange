@@ -1,35 +1,35 @@
-import { eq } from "drizzle-orm";
-import { Elysia, t } from "elysia";
-import { db } from "../models/db";
-import { products, stockMovements } from "../models/schema";
-import { productValidationSchema } from "../models/validations";
+import { eq } from 'drizzle-orm';
+import { Elysia, t } from 'elysia';
+import { db } from '../models/db';
+import { products, stockMovements } from '../models/schema';
+import { productValidationSchema } from '../models/validations';
 
-export const productController = new Elysia({ prefix: "/products" })
-  .get("/", async () => {
+export const productController = new Elysia({ prefix: '/products' })
+  .get('/', async () => {
     try {
       const allProducts = await db.select().from(products);
       return { success: true, data: allProducts };
     } catch (error) {
-      return { success: false, error: "Erro ao buscar produtos" };
+      return { success: false, error: 'Erro ao buscar produtos' };
     }
   })
 
-  .get("/:id", async ({ params: { id } }) => {
+  .get('/:id', async ({ params: { id } }) => {
     try {
       const product = await db
         .select()
         .from(products)
         .where(eq(products.id, parseInt(id)));
       if (!product.length)
-        return { success: false, error: "Produto não encontrado" };
+        return { success: false, error: 'Produto não encontrado' };
       return { success: true, data: product[0] };
     } catch (error) {
-      return { success: false, error: "Erro ao buscar produto" };
+      return { success: false, error: 'Erro ao buscar produto' };
     }
   })
 
   .post(
-    "/",
+    '/',
     async ({ body }) => {
       try {
         const newProduct = await db
@@ -42,16 +42,16 @@ export const productController = new Elysia({ prefix: "/products" })
           .returning();
         return { success: true, data: newProduct[0] };
       } catch (error) {
-        return { success: false, error: "Erro ao criar produto" };
+        return { success: false, error: 'Erro ao criar produto' };
       }
     },
     {
       body: productValidationSchema,
-    }
+    },
   )
 
   .put(
-    "/:id",
+    '/:id',
     async ({ params: { id }, body }) => {
       try {
         const updatedProduct = await db
@@ -63,18 +63,18 @@ export const productController = new Elysia({ prefix: "/products" })
           .where(eq(products.id, parseInt(id)))
           .returning();
         if (!updatedProduct.length)
-          return { success: false, error: "Produto não encontrado" };
+          return { success: false, error: 'Produto não encontrado' };
         return { success: true, data: updatedProduct[0] };
       } catch (error) {
-        return { success: false, error: "Erro ao atualizar produto" };
+        return { success: false, error: 'Erro ao atualizar produto' };
       }
     },
     {
       body: productValidationSchema,
-    }
+    },
   )
 
-  .delete("/:id", async ({ params: { id } }) => {
+  .delete('/:id', async ({ params: { id } }) => {
     try {
       return await db.transaction(async (tx) => {
         // Primeiro deleta todas as movimentações
@@ -89,18 +89,18 @@ export const productController = new Elysia({ prefix: "/products" })
           .returning();
 
         if (!deletedProduct.length) {
-          return { success: false, error: "Produto não encontrado" };
+          return { success: false, error: 'Produto não encontrado' };
         }
 
         return {
           success: true,
           data: {
-            message: "Produto e suas movimentações deletados com sucesso",
+            message: 'Produto e suas movimentações deletados com sucesso',
             deletedProduct: deletedProduct[0],
           },
         };
       });
     } catch (error) {
-      return { success: false, error: "Erro ao deletar produto" };
+      return { success: false, error: 'Erro ao deletar produto' };
     }
   });

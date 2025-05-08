@@ -1,13 +1,13 @@
-import { eq } from "drizzle-orm";
-import { Elysia } from "elysia";
-import { db } from "../models/db";
-import { products, stockMovements } from "../models/schema";
-import { stockMovementValidationSchema } from "../models/validations";
+import { eq } from 'drizzle-orm';
+import { Elysia } from 'elysia';
+import { db } from '../models/db';
+import { products, stockMovements } from '../models/schema';
+import { stockMovementValidationSchema } from '../models/validations';
 
 export const stockMovementController = new Elysia({
-  prefix: "/stock-movements",
+  prefix: '/stock-movements',
 })
-  .get("/", async () => {
+  .get('/', async () => {
     try {
       const movements = await db
         .select({
@@ -25,11 +25,11 @@ export const stockMovementController = new Elysia({
 
       return { success: true, data: movements };
     } catch (error) {
-      return { success: false, error: "Erro ao buscar movimentações" };
+      return { success: false, error: 'Erro ao buscar movimentações' };
     }
   })
   .post(
-    "/",
+    '/',
     async ({ body }) => {
       try {
         return await db.transaction(async (tx) => {
@@ -40,17 +40,17 @@ export const stockMovementController = new Elysia({
             .limit(1);
 
           if (!product.length) {
-            return { success: false, error: "Produto não encontrado" };
+            return { success: false, error: 'Produto não encontrado' };
           }
 
           const currentQuantity = product[0].quantity;
-          const movement = body.type === "IN" ? body.quantity : -body.quantity;
+          const movement = body.type === 'IN' ? body.quantity : -body.quantity;
           const newQuantity = currentQuantity + movement;
 
           if (newQuantity < 0) {
             return {
               success: false,
-              error: "Quantidade insuficiente em estoque",
+              error: 'Quantidade insuficiente em estoque',
             };
           }
 
@@ -79,14 +79,14 @@ export const stockMovementController = new Elysia({
           };
         });
       } catch (error) {
-        return { success: false, error: "Erro ao registrar movimentação" };
+        return { success: false, error: 'Erro ao registrar movimentação' };
       }
     },
     {
       body: stockMovementValidationSchema,
-    }
+    },
   )
-  .get("/:id", async ({ params: { id } }) => {
+  .get('/:id', async ({ params: { id } }) => {
     try {
       const movement = await db
         .select({
@@ -104,11 +104,11 @@ export const stockMovementController = new Elysia({
         .limit(1);
 
       if (!movement.length) {
-        return { success: false, error: "Movimentação não encontrada" };
+        return { success: false, error: 'Movimentação não encontrada' };
       }
 
       return { success: true, data: movement[0] };
     } catch (error) {
-      return { success: false, error: "Erro ao buscar movimentação" };
+      return { success: false, error: 'Erro ao buscar movimentação' };
     }
   });
