@@ -1,113 +1,106 @@
 import { eq } from "drizzle-orm";
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import { db } from "../models/db";
 import { products, stockMovements } from "../models/schema";
-import { productSchema, type ProductInput } from "../models/validations";
+import { productValidationSchema } from "../models/validations";
 
 export const productController = new Elysia({ prefix: "/products" })
   .get("/", async () => {
     try {
       const allProducts = await db.select().from(products);
-      return allProducts;
-    } catch (error: any) {
-      throw new Error(`Erro ao buscar produtos: ${error.message}`);
+      return { success: true, data: allProducts };
+    } catch (error) {
+      return { success: false, error: "Erro ao buscar produtos" };
     }
   })
 
-  .get("/:id", async ({ params }) => {
+  .get("/:id", async ({ params: { id } }) => {
     try {
-      if (!params.id || isNaN(Number(params.id))) {
-        throw new Error("ID inválido");
-      }
-
-      const productId = Number(params.id);
       const product = await db
         .select()
         .from(products)
-        .where(eq(products.id, productId))
-        .limit(1);
-
-      if (!product.length) {
-        throw new Error("Produto não encontrado");
-      }
-
-      return product[0];
-    } catch (error: any) {
-      throw new Error(`Erro ao buscar produto: ${error.message}`);
+        .where(eq(products.id, parseInt(id)));
+      if (!product.length)
+        return { success: false, error: "Produto não encontrado" };
+      return { success: true, data: product[0] };
+    } catch (error) {
+      return { success: false, error: "Erro ao buscar produto" };
     }
   })
 
-  .post("/", async ({ body }) => {
-    try {
-      const validatedData = productSchema.parse(body) as ProductInput;
-      const newProduct = await db
-        .insert(products)
-        .values(validatedData)
-        .returning();
-      return newProduct[0];
-    } catch (error: any) {
-      throw new Error(`Erro ao criar produto: ${error.message}`);
+  .post(
+    "/",
+    async ({ body }) => {
+      try {
+        const newProduct = await db
+          .insert(products)
+          .values({
+            ...body,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .returning();
+        return { success: true, data: newProduct[0] };
+      } catch (error) {
+        return { success: false, error: "Erro ao criar produto" };
+      }
+    },
+    {
+      body: productValidationSchema,
     }
-  })
+  )
 
-  .put("/:id", async ({ params, body }) => {
-    try {
-      if (!params.id || isNaN(Number(params.id))) {
-        throw new Error("ID inválido");
+  .put(
+    "/:id",
+    async ({ params: { id }, body }) => {
+      try {
+        const updatedProduct = await db
+          .update(products)
+          .set({
+            ...body,
+            updatedAt: new Date(),
+          })
+          .where(eq(products.id, parseInt(id)))
+          .returning();
+        if (!updatedProduct.length)
+          return { success: false, error: "Produto não encontrado" };
+        return { success: true, data: updatedProduct[0] };
+      } catch (error) {
+        return { success: false, error: "Erro ao atualizar produto" };
       }
-
-      const productId = Number(params.id);
-      const validatedData = productSchema.parse(body) as ProductInput;
-      const updatedProduct = await db
-        .update(products)
-        .set(validatedData)
-        .where(eq(products.id, productId))
-        .returning();
-
-      if (!updatedProduct.length) {
-        throw new Error("Produto não encontrado");
-      }
-
-      return updatedProduct[0];
-    } catch (error: any) {
-      throw new Error(`Erro ao atualizar produto: ${error.message}`);
+    },
+    {
+      body: productValidationSchema,
     }
-  })
+  )
 
-  .delete("/:id", async ({ params }) => {
+  .delete("/:id", async ({ params: { id } }) => {
     try {
-      if (!params.id || isNaN(Number(params.id))) {
-        throw new Error("ID inválido");
-      }
-
-      const productId = Number(params.id);
-
       return await db.transaction(async (tx) => {
-        // Verifica se o produto existe
-        const product = await tx
-          .select()
-          .from(products)
-          .where(eq(products.id, productId))
-          .limit(1);
-
-        if (!product.length) {
-          throw new Error("Produto não encontrado");
-        }
-
         // Primeiro deleta todas as movimentações
         await tx
           .delete(stockMovements)
-          .where(eq(stockMovements.productId, productId));
+          .where(eq(stockMovements.productId, parseInt(id)));
 
         // Depois deleta o produto
-        await tx.delete(products).where(eq(products.id, productId));
+        const deletedProduct = await tx
+          .delete(products)
+          .where(eq(products.id, parseInt(id)))
+          .returning();
+
+        if (!deletedProduct.length) {
+          return { success: false, error: "Produto não encontrado" };
+        }
 
         return {
-          message: "Produto e suas movimentações deletados com sucesso",
-          deletedProduct: product[0],
+          success: true,
+          data: {
+            message: "Produto e suas movimentações deletados com sucesso",
+            deletedProduct: deletedProduct[0],
+          },
         };
       });
-    } catch (error: any) {
-      throw new Error(`Erro ao deletar produto: ${error.message}`);
+    } catch (error) {
+      return { success: false, error: "Erro ao deletar produto" };
     }
   });

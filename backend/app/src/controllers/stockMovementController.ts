@@ -2,85 +2,113 @@ import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { db } from "../models/db";
 import { products, stockMovements } from "../models/schema";
-import { stockMovementSchema } from "../models/validations";
+import { stockMovementValidationSchema } from "../models/validations";
 
 export const stockMovementController = new Elysia({
   prefix: "/stock-movements",
 })
   .get("/", async () => {
     try {
-      const allMovements = await db.select().from(stockMovements);
-      return allMovements;
-    } catch (error: any) {
-      throw new Error(`Erro ao buscar movimentações: ${error.message}`);
+      const movements = await db
+        .select({
+          id: stockMovements.id,
+          productId: stockMovements.productId,
+          quantity: stockMovements.quantity,
+          type: stockMovements.type,
+          reason: stockMovements.reason,
+          createdAt: stockMovements.createdAt,
+          productName: products.name,
+        })
+        .from(stockMovements)
+        .leftJoin(products, eq(stockMovements.productId, products.id))
+        .orderBy(stockMovements.createdAt);
+
+      return { success: true, data: movements };
+    } catch (error) {
+      return { success: false, error: "Erro ao buscar movimentações" };
     }
   })
+  .post(
+    "/",
+    async ({ body }) => {
+      try {
+        return await db.transaction(async (tx) => {
+          const product = await tx
+            .select()
+            .from(products)
+            .where(eq(products.id, body.productId))
+            .limit(1);
 
-  .get("/:id", async ({ params }) => {
-    try {
-      if (!params.id || isNaN(Number(params.id))) {
-        throw new Error("ID inválido");
+          if (!product.length) {
+            return { success: false, error: "Produto não encontrado" };
+          }
+
+          const currentQuantity = product[0].quantity;
+          const movement = body.type === "IN" ? body.quantity : -body.quantity;
+          const newQuantity = currentQuantity + movement;
+
+          if (newQuantity < 0) {
+            return {
+              success: false,
+              error: "Quantidade insuficiente em estoque",
+            };
+          }
+
+          await tx
+            .update(products)
+            .set({
+              quantity: newQuantity,
+              updatedAt: new Date(),
+            })
+            .where(eq(products.id, body.productId));
+
+          const newMovement = await tx
+            .insert(stockMovements)
+            .values({
+              ...body,
+              createdAt: new Date(),
+            })
+            .returning();
+
+          return {
+            success: true,
+            data: {
+              movement: newMovement[0],
+              newQuantity,
+            },
+          };
+        });
+      } catch (error) {
+        return { success: false, error: "Erro ao registrar movimentação" };
       }
-
-      const movementId = Number(params.id);
+    },
+    {
+      body: stockMovementValidationSchema,
+    }
+  )
+  .get("/:id", async ({ params: { id } }) => {
+    try {
       const movement = await db
-        .select()
+        .select({
+          id: stockMovements.id,
+          productId: stockMovements.productId,
+          quantity: stockMovements.quantity,
+          type: stockMovements.type,
+          reason: stockMovements.reason,
+          createdAt: stockMovements.createdAt,
+          productName: products.name,
+        })
         .from(stockMovements)
-        .where(eq(stockMovements.id, movementId))
+        .leftJoin(products, eq(stockMovements.productId, products.id))
+        .where(eq(stockMovements.id, parseInt(id)))
         .limit(1);
 
       if (!movement.length) {
-        throw new Error("Movimentação não encontrada");
+        return { success: false, error: "Movimentação não encontrada" };
       }
 
-      return movement[0];
-    } catch (error: any) {
-      throw new Error(`Erro ao buscar movimentação: ${error.message}`);
-    }
-  })
-
-  .post("/", async ({ body }) => {
-    try {
-      const validatedData = stockMovementSchema.safeParse(body);
-
-      if (!validatedData.success) {
-        throw new Error(`Erro de validação: ${validatedData.error.message}`);
-      }
-
-      return await db.transaction(async (tx) => {
-        const newMovement = await tx
-          .insert(stockMovements)
-          .values(validatedData.data)
-          .returning();
-
-        const product = await tx
-          .select()
-          .from(products)
-          .where(eq(products.id, validatedData.data.productId))
-          .limit(1);
-
-        if (!product.length) {
-          throw new Error("Produto não encontrado");
-        }
-
-        const currentQuantity = product[0].quantity;
-        const newQuantity =
-          validatedData.data.type === "entrada"
-            ? currentQuantity + validatedData.data.quantity
-            : currentQuantity - validatedData.data.quantity;
-
-        if (newQuantity < 0) {
-          throw new Error("Quantidade insuficiente em estoque");
-        }
-
-        await tx
-          .update(products)
-          .set({ quantity: newQuantity })
-          .where(eq(products.id, validatedData.data.productId));
-
-        return newMovement[0];
-      });
-    } catch (error: any) {
-      throw new Error(`Erro ao criar movimentação: ${error.message}`);
+      return { success: true, data: movement[0] };
+    } catch (error) {
+      return { success: false, error: "Erro ao buscar movimentação" };
     }
   });

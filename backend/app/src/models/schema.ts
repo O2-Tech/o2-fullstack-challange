@@ -14,12 +14,12 @@ export const movementTypeEnum = pgEnum("movement_type", ["entrada", "saida"]);
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  description: text("description"),
+  description: text("description").notNull(),
   quantity: integer("quantity").notNull().default(0),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   category: text("category").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const stockMovements = pgTable("stock_movements", {
@@ -28,9 +28,9 @@ export const stockMovements = pgTable("stock_movements", {
     .references(() => products.id)
     .notNull(),
   quantity: integer("quantity").notNull(),
-  type: movementTypeEnum("type").notNull(),
-  description: text("description"),
-  createdAt: timestamp("created_at").defaultNow(),
+  type: text("type", { enum: ["IN", "OUT"] }).notNull(),
+  reason: text("reason").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export type Product = typeof products.$inferSelect;

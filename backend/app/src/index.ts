@@ -17,10 +17,24 @@ const app = new Elysia()
       },
     })
   )
+  .onError(({ code, error }) => {
+    console.error(
+      `[${code}] ${error instanceof Error ? error.message : "Erro desconhecido"}`
+    );
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erro desconhecido",
+    };
+  })
   .use(productController)
   .use(stockMovementController)
   .use(reportController)
-  .get("/", () => "API de Gestão de Estoque")
+  .get("/", () => ({
+    success: true,
+    message: "API de Gestão de Estoque",
+    version: "1.0.0",
+    docs: "/swagger",
+  }))
   .listen(process.env.PORT || 3000);
 
 console.log(
