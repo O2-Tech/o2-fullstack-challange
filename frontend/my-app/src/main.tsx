@@ -1,14 +1,14 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   RouterProvider,
-  createRootRoute,
+  createRootRouteWithContext,
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import reportWebVitals from "./reportWebVitals.ts";
 import "./styles.css";
 
@@ -16,7 +16,9 @@ import App from "./App.tsx";
 import { produtosRoute } from "./pages/Produtos";
 
 const queryClient = new QueryClient();
-export const rootRoute = createRootRoute({
+export const rootRoute = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   component: () => (
     <>
       <QueryClientProvider client={queryClient}>
@@ -36,7 +38,7 @@ const routeTree = rootRoute.addChildren([indexRoute, produtosRoute]);
 
 const router = createRouter({
   routeTree,
-  context: {},
+  context: { queryClient },
   defaultPreload: "intent",
   scrollRestoration: true,
   defaultStructuralSharing: true,
