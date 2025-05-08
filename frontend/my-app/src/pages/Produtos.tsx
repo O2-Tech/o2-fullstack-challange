@@ -1,52 +1,33 @@
+import { rootRoute } from "@/main";
+import { createRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { ProductModal } from "../components/ProductModal";
 import {
   productService,
   type Product,
   type ProductInput,
 } from "../services/productService";
-import { ProductModal } from "../components/ProductModal";
 
-export function Produtos() {
-  const [products, setProducts] = useState<Product[]>([]);
+export const produtosRoute = createRoute({
+  pendingComponent: () => <div>Carregando...</div>,
+  getParentRoute: () => rootRoute,
+  path: "/produtos",
+  component: Produtos,
+  loader: async () => {
+    const products = await productService.listProducts();
+    return { products };
+  },
+});
+
+function Produtos() {
+  const { products } = produtosRoute.useLoaderData();
+  console.log(products);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
-  const [retryCount, setRetryCount] = useState(0);
 
-  // Carrega produtos ao montar o componente
-  useState(() => {
-    loadProducts();
-  });
-
-  async function loadProducts(retry = false) {
-    if (retry) {
-      setRetryCount((count) => count + 1);
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-      console.log("Tentando carregar produtos...");
-      const data = await productService.listProducts();
-      console.log("Produtos carregados:", data);
-      setProducts(data);
-      setRetryCount(0);
-    } catch (err) {
-      console.error("Erro ao carregar produtos:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "Erro ao carregar produtos";
-      setError(errorMessage);
-
-      // Tenta novamente automaticamente se for erro de conexão
-      if (errorMessage.includes("conexão") && retryCount < 3) {
-        console.log("Tentando reconectar em 2 segundos...");
-        setTimeout(() => loadProducts(true), 2000);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const setProducts = (products: Product[]) => {};
 
   async function handleSave(productData: ProductInput) {
     try {
@@ -70,29 +51,22 @@ export function Produtos() {
         const newProduct = await productService.createProduct(productData);
 
         // Atualiza o produto com o ID correto
-        setProducts((products) =>
-          products.map((p) => (p.id === tempProduct.id ? newProduct : p))
-        );
       }
 
       setModalOpen(false);
       setSelectedProduct(undefined);
     } catch (err) {
-      // Em caso de erro, recarrega os produtos
-      loadProducts();
-      throw err; // Propaga o erro para o modal exibir a mensagem
+      setError(err instanceof Error ? err.message : "Erro ao salvar produto");
     }
   }
 
   async function handleDelete(id: number) {
-    // UI Otimista: Remove o produto imediatamente
     const previousProducts = [...products];
     setProducts(products.filter((p) => p.id !== id));
 
     try {
       await productService.deleteProduct(id);
     } catch (err) {
-      // Em caso de erro, restaura o estado anterior
       setProducts(previousProducts);
       setError("Falha ao deletar produto");
     }
@@ -108,18 +82,11 @@ export function Produtos() {
     setSelectedProduct(undefined);
   }
 
-  if (isLoading) {
-    return <div className="p-4">Carregando produtos...</div>;
-  }
-
   if (error) {
     return (
       <div className="p-4 text-red-600">
         {error}
-        <button
-          onClick={() => loadProducts(true)}
-          className="ml-2 text-blue-500 hover:text-blue-700"
-        >
+        <button className="ml-2 text-blue-500 hover:text-blue-700">
           Tentar novamente
         </button>
       </div>

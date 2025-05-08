@@ -1,5 +1,3 @@
-import { StrictMode } from "react";
-import ReactDOM from "react-dom/client";
 import {
   Outlet,
   RouterProvider,
@@ -8,18 +6,23 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-
-import "./styles.css";
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import reportWebVitals from "./reportWebVitals.ts";
+import "./styles.css";
 
 import App from "./App.tsx";
-import { Produtos } from "./pages/Produtos";
+import { produtosRoute } from "./pages/Produtos";
 
-const rootRoute = createRootRoute({
+const queryClient = new QueryClient();
+export const rootRoute = createRootRoute({
   component: () => (
     <>
-      <Outlet />
-      <TanStackRouterDevtools />
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+        <TanStackRouterDevtools />
+      </QueryClientProvider>
     </>
   ),
 });
@@ -29,15 +32,6 @@ const indexRoute = createRoute({
   path: "/",
   component: App,
 });
-
-// Nova rota de produtos
-const produtosRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/produtos",
-  component: Produtos,
-});
-
-// Adicionando a nova rota ao routeTree
 const routeTree = rootRoute.addChildren([indexRoute, produtosRoute]);
 
 const router = createRouter({

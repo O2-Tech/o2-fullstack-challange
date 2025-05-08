@@ -1,3 +1,4 @@
+import { queryOptions } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "../config/api";
 
 export interface Product {
@@ -62,7 +63,6 @@ class ProductService {
       const response = await fetch(API_ENDPOINTS.products.list, {
         method: "GET",
         headers: defaultHeaders,
-        credentials: "include",
       });
       console.log("Resposta recebida:", response.status);
       return this.handleResponse<Product[]>(response);
@@ -77,7 +77,6 @@ class ProductService {
       const response = await fetch(API_ENDPOINTS.products.detail(id), {
         method: "GET",
         headers: defaultHeaders,
-        credentials: "include",
       });
       return this.handleResponse<Product>(response);
     } catch (error) {
@@ -91,7 +90,7 @@ class ProductService {
       const response = await fetch(API_ENDPOINTS.products.create, {
         method: "POST",
         headers: defaultHeaders,
-        credentials: "include",
+
         body: JSON.stringify(product),
       });
       return this.handleResponse<Product>(response);
@@ -106,7 +105,6 @@ class ProductService {
       const response = await fetch(API_ENDPOINTS.products.update(id), {
         method: "PUT",
         headers: defaultHeaders,
-        credentials: "include",
         body: JSON.stringify(product),
       });
       return this.handleResponse<Product>(response);
@@ -130,5 +128,19 @@ class ProductService {
     }
   }
 }
+
+const listAllProductsQueryOptions = queryOptions({
+  queryKey: ["products"],
+  queryFn: async () => {
+    const response = await fetch(API_ENDPOINTS.products.list, {
+      method: "GET",
+      headers: defaultHeaders,
+    });
+    if (!response.ok) {
+      throw new Error("Erro ao buscar produtos");
+    }
+    return await response.json();
+  },
+});
 
 export const productService = new ProductService();

@@ -7,7 +7,7 @@ import { reportController } from './controllers/reportController';
 import { opentelemetry } from '@elysiajs/opentelemetry';
 
 const app = new Elysia()
-  .use(cors())
+  .use(cors({ origin: '*' }))
   .use(opentelemetry())
   .use(
     swagger({

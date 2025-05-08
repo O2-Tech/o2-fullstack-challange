@@ -8,6 +8,13 @@
       "when": 1746629532230,
       "tag": "0000_crazy_speed_demon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1746711968250,
+      "tag": "0001_slow_menace",
+      "breakpoints": true
     }
   ]
 }

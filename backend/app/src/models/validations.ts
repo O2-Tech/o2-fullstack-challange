@@ -9,7 +9,7 @@ export const productValidationSchema = t.Object({
     minLength: 1,
     error: 'Descrição do produto é obrigatória',
   }),
-  price: t.String({
+  price: t.Number({
     error: 'Preço é obrigatório',
   }),
   category: t.String({

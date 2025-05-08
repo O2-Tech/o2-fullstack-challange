@@ -4,13 +4,21 @@ import { db } from '../models/db';
 import { products, stockMovements } from '../models/schema';
 import { productValidationSchema } from '../models/validations';
 
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const productController = new Elysia({ prefix: '/products' })
   .get('/', async () => {
     try {
       const allProducts = await db.select().from(products);
-      return { success: true, data: allProducts };
+      await sleep(1000);
+      return allProducts.map((product) => ({
+        ...product,
+        price: parseFloat(product.price),
+      }));
     } catch (error) {
-      return { success: false, error: 'Erro ao buscar produtos' };
+      return { error: 'Erro ao buscar produtos' };
     }
   })
 
@@ -20,11 +28,10 @@ export const productController = new Elysia({ prefix: '/products' })
         .select()
         .from(products)
         .where(eq(products.id, parseInt(id)));
-      if (!product.length)
-        return { success: false, error: 'Produto não encontrado' };
-      return { success: true, data: product[0] };
+      if (!product.length) return { error: 'Produto não encontrado' };
+      return { data: product[0] };
     } catch (error) {
-      return { success: false, error: 'Erro ao buscar produto' };
+      return { error: 'Erro ao buscar produto' };
     }
   })
 
@@ -36,6 +43,7 @@ export const productController = new Elysia({ prefix: '/products' })
           .insert(products)
           .values({
             ...body,
+            price: body.price.toString(),
             createdAt: new Date(),
             updatedAt: new Date(),
           })
@@ -58,6 +66,7 @@ export const productController = new Elysia({ prefix: '/products' })
           .update(products)
           .set({
             ...body,
+            price: body.price.toString(),
             updatedAt: new Date(),
           })
           .where(eq(products.id, parseInt(id)))
@@ -77,12 +86,10 @@ export const productController = new Elysia({ prefix: '/products' })
   .delete('/:id', async ({ params: { id } }) => {
     try {
       return await db.transaction(async (tx) => {
-        // Primeiro deleta todas as movimentações
         await tx
           .delete(stockMovements)
           .where(eq(stockMovements.productId, parseInt(id)));
 
-        // Depois deleta o produto
         const deletedProduct = await tx
           .delete(products)
           .where(eq(products.id, parseInt(id)))
