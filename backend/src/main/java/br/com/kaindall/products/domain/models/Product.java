@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public record Product(
-        Long product_id,
+        Long id,
         String name,
         String description,
         Category category,

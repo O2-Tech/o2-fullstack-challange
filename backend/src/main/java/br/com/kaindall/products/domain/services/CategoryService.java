@@ -4,6 +4,8 @@ import br.com.kaindall.products.domain.gateways.CategoryGateway;
 import br.com.kaindall.products.domain.models.Category;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CategoryService {
     private final CategoryGateway categoryGateway;
@@ -12,19 +14,23 @@ public class CategoryService {
         this.categoryGateway = categoryGateway;
     }
 
-    boolean create(String name, String description) {
-        return categoryGateway.save(name, description);
+    public boolean create(Category category) {
+        return categoryGateway.save(category);
     }
 
-    boolean update(String name, String description) {
-        return categoryGateway.save(name, description);
+    public boolean update(Category category) {
+        return categoryGateway.save(category);
     }
 
-    Category retrieve(Long categoryId) {
+    public List<Category> retrieveAll() {
+        return categoryGateway.findAll();
+    }
+
+    public Category retrieve(Long categoryId) {
         return categoryGateway.find(categoryId);
     }
 
-    boolean remove(Long categoryId) {
+    public boolean remove(Long categoryId) {
         return categoryGateway.delete(categoryId);
     }
 }

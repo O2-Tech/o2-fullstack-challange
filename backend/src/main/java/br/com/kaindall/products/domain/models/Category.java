@@ -3,7 +3,7 @@ package br.com.kaindall.products.domain.models;
 import java.math.BigInteger;
 
 public record Category(
-        Long id_category,
+        Long id,
         String name,
         String description
 ) {

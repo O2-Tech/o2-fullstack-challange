@@ -1,4 +1,4 @@
 package br.com.kaindall.products.application.dtos.requests;
 
-public class UpdateCategoryDTO {
+public record UpdateCategoryDTO() {
 }
