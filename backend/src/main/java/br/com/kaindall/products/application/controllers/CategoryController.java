@@ -5,8 +5,6 @@ import br.com.kaindall.products.application.dtos.requests.UpdateProductDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
-
 @RestController("/categories")
 public class CategoryController {
 
@@ -16,14 +14,20 @@ public class CategoryController {
     }
 
     @GetMapping("/{id_category}")
-    public ResponseEntity<Void> retrieveCategory(@PathVariable BigInteger id) {
+    public ResponseEntity<Void> retrieveCategory(@PathVariable Long id) {
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{id_category}")
     public ResponseEntity<Void> updateCategory(
-            @PathVariable BigInteger id,
+            @PathVariable Long id,
             @RequestBody UpdateProductDTO product) {
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id_category}")
+    public ResponseEntity<Void> deleteCategory(
+            @PathVariable Long id) {
         return ResponseEntity.ok().build();
     }
 }

@@ -5,8 +5,6 @@ import br.com.kaindall.products.application.dtos.requests.UpdateProductDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
-
 @RestController("/products")
 public class ProductController {
 
@@ -17,26 +15,26 @@ public class ProductController {
 
     @PostMapping("/{id_product}")
     public ResponseEntity<Void> addProduct(
-            @PathVariable BigInteger id,
+            @PathVariable Long id,
             @RequestParam int quantity) {
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id_product}")
-    public ResponseEntity<Void> retrieveProduct(@PathVariable BigInteger id) {
+    public ResponseEntity<Void> retrieveProduct(@PathVariable Long id) {
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{id_product}")
     public ResponseEntity<Void> updateProduct(
-            @PathVariable BigInteger id,
+            @PathVariable Long id,
             @RequestBody UpdateProductDTO product) {
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id_product}")
     public ResponseEntity<Void> decreaseProduct(
-            @PathVariable BigInteger id,
+            @PathVariable Long id,
             @RequestParam int quantity) {
         return ResponseEntity.ok().build();
     }
