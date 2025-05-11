@@ -5,11 +5,13 @@ import br.com.kaindall.products.domain.models.Category;
 import br.com.kaindall.products.infrastructure.adapters.mappers.CategoryEntityMapper;
 import br.com.kaindall.products.infrastructure.jpa.entities.CategoryEntity;
 import br.com.kaindall.products.infrastructure.jpa.repositories.CategoryRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Component
 public class CategoryAdapter implements CategoryGateway {
     private final CategoryRepository categoryRepository;
     private final CategoryEntityMapper categoryMapper;

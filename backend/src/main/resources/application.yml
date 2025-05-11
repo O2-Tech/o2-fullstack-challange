@@ -2,9 +2,9 @@ spring:
   application:
     name: products
   datasource:
-    url: jdbc:mysql://localhost:3306/nome_do_banco?useSSL=false&serverTimezone=UTC
-    username: seu_usuario
-    password: sua_senha
+    url: jdbc:mysql://localhost:3306/O2_STORAGE?useSSL=false&serverTimezone=UTC
+    username: Kaindall
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -12,4 +12,4 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQLDialect

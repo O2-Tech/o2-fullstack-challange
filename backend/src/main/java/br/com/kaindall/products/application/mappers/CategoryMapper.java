@@ -4,7 +4,9 @@ import br.com.kaindall.products.application.dtos.requests.CreateCategoryDTO;
 import br.com.kaindall.products.application.dtos.requests.UpdateCategoryDTO;
 import br.com.kaindall.products.application.dtos.responses.CategoryDTO;
 import br.com.kaindall.products.domain.models.Category;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CategoryMapper {
     public Category toDomain(CreateCategoryDTO category) {
         return new Category(null, category.name(), category.description());

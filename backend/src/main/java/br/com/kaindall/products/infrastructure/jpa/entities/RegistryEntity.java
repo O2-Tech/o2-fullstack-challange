@@ -21,12 +21,11 @@ public class RegistryEntity {
 
     @ManyToOne
     @JoinColumn(name="id_product")
-    private Product product;
+    private ProductEntity product;
 
     private RegistryTypes type;
 
     private int quantity;
 
-    @Temporal(TemporalType.DATE)
     private LocalDateTime date;
 }

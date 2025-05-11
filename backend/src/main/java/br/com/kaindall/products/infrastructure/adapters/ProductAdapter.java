@@ -9,11 +9,12 @@ import br.com.kaindall.products.infrastructure.jpa.repositories.ProductRepositor
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Component
 public class ProductAdapter implements ProductGateway {
     private final ProductRepository productRepository;
     private final ProductEntityMapper productMapper;

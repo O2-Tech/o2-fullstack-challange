@@ -6,7 +6,9 @@ import br.com.kaindall.products.application.dtos.responses.ProductDTO;
 import br.com.kaindall.products.domain.models.Category;
 import br.com.kaindall.products.domain.models.Product;
 import br.com.kaindall.products.domain.models.ProductsPage;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductMapper {
     public Product toDomain (UpdateProductDTO product, Long id, Category category) {
         return new Product(

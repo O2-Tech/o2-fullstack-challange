@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/products")
+@RestController
+@RequestMapping("/products")
 public class ProductController {
     private final ProductFacade productFacade;
     private final ProductMapper productMapper;
@@ -21,7 +22,7 @@ public class ProductController {
         this.productMapper = productMapper;
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Long> createProduct(@RequestBody CreateProductDTO product) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -32,7 +33,7 @@ public class ProductController {
                 );
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<ProductDTO>> retrieveAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,

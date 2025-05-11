@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/categories")
+@RestController()
+@RequestMapping("/categories")
 public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
@@ -30,7 +31,7 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<CategoryDTO>> retrieveAllCategories() {
         return ResponseEntity
                 .status(HttpStatus.OK)
