@@ -25,10 +25,15 @@ public class ProductAdapter implements ProductGateway {
     }
 
     @Override
+    public Product save(Product product) {
+        return productMapper.toDomain(productRepository.save(productMapper.toEntity(product)));
+    }
+
+    @Override
     public Product add(Long id, int quantity) {
         ProductEntity product = productRepository.findById(id).get();
         product.setQuantity(product.getQuantity()+quantity);
-        return productMapper.toDomain(productRepository.save(product));
+        return productMapper.toDomain((productRepository.save(product)));
     }
 
     @Override
@@ -66,20 +71,5 @@ public class ProductAdapter implements ProductGateway {
                 .findAll(pageableProduct)
                 .map(productMapper::toDomain)
                 .toList();
-    }
-
-//    @Override
-//    public List<Product> findAll() {
-//        List<ProductEntity> productEntities = new ArrayList<>();
-//        productRepository.findAll().forEach(productEntities::add);
-//        return productEntities
-//                .stream()
-//                .map(productMapper::toDomain)
-//                .toList();
-//    }
-
-    @Override
-    public Product save(Product product) {
-        return productMapper.toDomain(productRepository.save(product));
     }
 }

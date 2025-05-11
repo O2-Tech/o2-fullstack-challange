@@ -5,7 +5,7 @@ import br.com.kaindall.products.domain.models.Category;
 import java.util.List;
 
 public interface CategoryGateway {
-    boolean save(Category category);
+    Category save(Category category);
 
     Category find(Long id);
 

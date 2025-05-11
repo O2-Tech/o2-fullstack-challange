@@ -5,7 +5,6 @@ import br.com.kaindall.products.domain.models.Category;
 import java.math.BigDecimal;
 
 public record UpdateProductDTO(
-        Long id,
         String name,
         String description,
         String categoryName,

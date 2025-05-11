@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class ProductMapper {
     public Product toDomain (UpdateProductDTO product, Long id, Category category) {
         return new Product(
-                product.id(),
+                id,
                 product.name(),
                 product.description(),
                 category,

@@ -22,8 +22,13 @@ public class CategoryAdapter implements CategoryGateway {
     }
 
     @Override
-    public boolean save(Category category) {
-        return categoryRepository.save(category) != null;
+    public Category save(Category category) {
+        if (category.id() == null) {
+            return categoryMapper.toDomain((categoryRepository.save(categoryMapper.toEntity(category))));
+        }
+        CategoryEntity currentCategory = categoryRepository.findById(category.id()).get();
+        CategoryEntity updatedCategory = categoryMapper.toEntity(currentCategory, category);
+        return categoryMapper.toDomain((categoryRepository.save(updatedCategory)));
     }
 
     @Override

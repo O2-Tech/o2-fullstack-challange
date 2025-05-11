@@ -14,11 +14,11 @@ public class CategoryService {
         this.categoryGateway = categoryGateway;
     }
 
-    public boolean create(Category category) {
+    public Category create(Category category) {
         return categoryGateway.save(category);
     }
 
-    public boolean update(Category category) {
+    public Category update(Category category) {
         return categoryGateway.save(category);
     }
 
