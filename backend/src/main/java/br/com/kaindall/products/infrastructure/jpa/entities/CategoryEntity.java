@@ -15,7 +15,7 @@ import java.math.BigInteger;
 public class CategoryEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id_category;
+    private Long id;
 
     private String name;
 

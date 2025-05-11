@@ -1,6 +1,7 @@
 package br.com.kaindall.products.application.controllers;
 
 import br.com.kaindall.products.application.dtos.requests.CreateCategoryDTO;
+import br.com.kaindall.products.application.dtos.requests.UpdateCategoryDTO;
 import br.com.kaindall.products.application.dtos.requests.UpdateProductDTO;
 import br.com.kaindall.products.application.dtos.responses.CategoryDTO;
 import br.com.kaindall.products.application.mappers.CategoryMapper;
@@ -41,20 +42,24 @@ public class CategoryController {
     }
 
     @GetMapping("/{id_category}")
-    public ResponseEntity<Void> retrieveCategory(@PathVariable Long id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CategoryDTO> retrieveCategory(@PathVariable Long id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(categoryMapper.toDTO(categoryService.retrieve(id)));
     }
 
     @PatchMapping("/{id_category}")
     public ResponseEntity<Void> updateCategory(
             @PathVariable Long id,
-            @RequestBody UpdateProductDTO product) {
+            @RequestBody UpdateCategoryDTO category) {
+        categoryService.update(categoryMapper.toDomain(id, category));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id_category}")
     public ResponseEntity<Void> deleteCategory(
             @PathVariable Long id) {
-        return ResponseEntity.ok().build();
+        categoryService.remove(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

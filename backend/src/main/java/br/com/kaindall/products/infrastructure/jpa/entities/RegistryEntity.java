@@ -1,13 +1,13 @@
 package br.com.kaindall.products.infrastructure.jpa.entities;
 
-import br.com.kaindall.products.domain.enums.RegistryTypes;
+import br.com.kaindall.products.domain.utils.enums.RegistryTypes;
 import br.com.kaindall.products.domain.models.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ import java.util.Date;
 public class RegistryEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long registry_id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name="id_product")
@@ -25,6 +25,8 @@ public class RegistryEntity {
 
     private RegistryTypes type;
 
+    private int quantity;
+
     @Temporal(TemporalType.DATE)
-    private Date date;
+    private LocalDateTime date;
 }

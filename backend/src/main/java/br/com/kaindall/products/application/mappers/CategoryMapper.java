@@ -9,7 +9,9 @@ public class CategoryMapper {
     public Category toDomain(CreateCategoryDTO category) {
         return new Category(null, category.name(), category.description());
     }
-    public Category toDomain(UpdateCategoryDTO category) {return null;}
+    public Category toDomain(Long id, UpdateCategoryDTO category) {
+        return new Category(id, category.name(), category.description());
+    }
     public CategoryDTO toDTO(Category category) {
         return new CategoryDTO(category.id(), category.name(), category.description());
     }

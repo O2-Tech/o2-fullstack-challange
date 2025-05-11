@@ -30,6 +30,8 @@ public class CategoryService {
         return categoryGateway.find(categoryId);
     }
 
+    public Category retrieveByName(String name) {return categoryGateway.findByName(name);}
+
     public boolean remove(Long categoryId) {
         return categoryGateway.delete(categoryId);
     }

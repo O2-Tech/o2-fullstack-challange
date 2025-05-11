@@ -18,7 +18,7 @@ import java.math.BigInteger;
 public class ProductEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long product_id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -30,4 +30,6 @@ public class ProductEntity {
     private Category category;
 
     private BigDecimal price;
+
+    private int quantity;
 }

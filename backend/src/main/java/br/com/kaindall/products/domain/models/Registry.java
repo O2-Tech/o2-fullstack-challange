@@ -1,13 +1,14 @@
 package br.com.kaindall.products.domain.models;
 
-import br.com.kaindall.products.domain.enums.RegistryTypes;
+import br.com.kaindall.products.domain.utils.enums.RegistryTypes;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record Registry(
         Long id,
-        Product product,
+        Long productId,
         RegistryTypes type,
-        Date date
+        int quantity,
+        LocalDateTime date
 ) {
 }

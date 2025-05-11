@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: products
+  datasource:
+    url: jdbc:mysql://localhost:3306/nome_do_banco?useSSL=false&serverTimezone=UTC
+    username: seu_usuario
+    password: sua_senha
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # ou 'create', 'validate', 'none' dependendo do que você deseja
+    show-sql: true     # opcional: mostra as queries no console
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect # ajuste conforme a versão do MySQL
