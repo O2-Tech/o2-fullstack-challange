@@ -8,8 +8,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update # ou 'create', 'validate', 'none' dependendo do que você deseja
-    show-sql: true     # opcional: mostra as queries no console
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect # ajuste conforme a versão do MySQL
+        dialect: org.hibernate.dialect.MySQL8Dialect
